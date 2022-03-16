@@ -2,7 +2,7 @@
 	"name": "pinned-chat-message",
 	"title": "Pinned chat message",
 	"description": "Pinned message to keep it in another chat (global).",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"minimumCoreVersion": "0.9.0",
 	"compatibleCoreVersion": "9",
 	"author": "Jean-Daniel Eymann",
