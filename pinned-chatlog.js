@@ -36,35 +36,33 @@ function selectPinnedTab(){
 };
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
-    addButton(html, chatMessage.data);
+    addButton(html, chatMessage);
+
+    if(chatMessage.data?.flags?.pinnedChat?.pinned){
+        html.addClass("pinned-message")
+    }
 
     if (currentTab == "pinned" && !html.hasClass(".pinned-message")) {
         html.hide();
     }
 });
 
-function addButton(messageElement, dataObj) {
+function addButton(messageElement, chatMessage) {
     let deletecardElement = messageElement.find(".message-delete")
     // Can't find it?
     if (deletecardElement.length != 1) {
         return;
     }
     let button = $(`<a> <i class="fas fa-map-pin"></i></a>`);
-    button.on('click', (event) => pinnedMessage(messageElement, dataObj));
+    button.on('click', (event) => pinnedMessage(messageElement, chatMessage));
     deletecardElement.after(button);
 };
 
-function pinnedMessage(message, dataObj){
-    if(dataObj.pinned){
-        message.removeClass('pinned-message');
+function pinnedMessage(message, chatMessage){
+    let pinned = chatMessage.data?.flags?.pinnedChat?.pinned;
 
-        if(currentTab == "pinned"){
-            message.hide();
-        }
-
-    } else {
-        message.addClass('pinned-message');
-    }
     
-    dataObj.pinned = !dataObj.pinned
+    pinned = !pinned;
+
+    chatMessage.update({ "flags.pinnedChat.pinned": pinned },{"diff" :true});
 };
