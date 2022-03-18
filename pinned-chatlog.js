@@ -45,7 +45,9 @@ function selectPinnedTab(chatLog){
 };
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
-    addButton(html, chatMessage);
+    if(chatMessage.canUserModify(Users.instance.current,'update')){
+        addButton(html, chatMessage);
+    }
 
     if(chatMessage.data?.flags?.pinnedChat?.pinned){
         html.addClass("pinned-message")
@@ -57,14 +59,14 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
 });
 
 function addButton(messageElement, chatMessage) {
-    let deletecardElement = messageElement.find(".message-delete")
+    let messageMetadata = messageElement.find(".message-metadata")
     // Can't find it?
-    if (deletecardElement.length != 1) {
+    if (messageMetadata.length != 1) {
         return;
     }
     let button = $(`<a> <i class="fas fa-map-pin"></i></a>`);
     button.on('click', (event) => pinnedMessage(messageElement, chatMessage));
-    deletecardElement.after(button);
+    messageMetadata.append(button);
 };
 
 function pinnedMessage(message, chatMessage){
