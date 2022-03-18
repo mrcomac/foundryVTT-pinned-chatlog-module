@@ -24,7 +24,7 @@ Hooks.on("renderChatLog", async function (chatLog, html, user) {
     html.prepend(toPrepend);
 });
 
-function selectDefaultTab(){
+function selectDefaultTab(chatLog){
     currentTab = "default";
     buttonDefault.addClass('active');
     buttonPinned.removeClass('active');
