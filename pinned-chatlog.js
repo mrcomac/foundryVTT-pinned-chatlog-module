@@ -12,11 +12,11 @@ function setClassVisibility(cssClass, visible) {
 
 //Add chatlog type navigation
 Hooks.on("renderChatLog", async function (chatLog, html, user) {
-    buttonDefault.on('click', (event) => selectDefaultTab());
     buttonDefault = $(`<a class="item active default" data-tab="default">${game.i18n.localize("TC.TABS.Default")}</a>`);
+    buttonDefault.on('click', (event) => selectDefaultTab(chatLog));
 
-    buttonPinned.on('click', (event) => selectPinnedTab());
     buttonPinned = $(`<a class="item pinned" data-tab="pinned">${game.i18n.localize("TC.TABS.Pinned")}</a>`);
+    buttonPinned.on('click', (event) => selectPinnedTab(chatLog));
 
     let toPrepend = $('<nav class="pinnedchatlog tabs"></nav>');
     toPrepend.append(buttonDefault).append(buttonPinned);
@@ -30,14 +30,18 @@ function selectDefaultTab(){
     buttonPinned.removeClass('active');
 
     setClassVisibility($(".chat-message"), true);
+
+    chatLog.scrollBottom(true)
 };
 
-function selectPinnedTab(){
+function selectPinnedTab(chatLog){
     currentTab = "pinned";
     buttonPinned.addClass('active');
     buttonDefault.removeClass('active');
 
     setClassVisibility($(".chat-message").not(".pinned-message"), false);
+
+    chatLog.scrollBottom(true)
 };
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
