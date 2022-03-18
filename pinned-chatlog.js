@@ -1,4 +1,6 @@
 let currentTab = "default";
+let buttonDefault;
+let buttonPinned;
 
 function setClassVisibility(cssClass, visible) {
     if (visible) {
@@ -10,11 +12,11 @@ function setClassVisibility(cssClass, visible) {
 
 //Add chatlog type navigation
 Hooks.on("renderChatLog", async function (chatLog, html, user) {
-    let buttonDefault = $(`<a class="item default" data-tab="default">${game.i18n.localize("TC.TABS.Default")}</a><i id="defaultNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`);
-    buttonDefault.on('click', (event) => selectDefaultTab());
+    buttonDefault = $(`<a class="item active default" data-tab="default">${game.i18n.localize("TC.TABS.Default")}</a>`);
+    buttonDefault.on('click', (event) => selectDefaultTab(chatLog));
 
-    let buttonPinned = $(`<a class="item pinned" data-tab="pinned">${game.i18n.localize("TC.TABS.Pinned")}</a><i id="pinnedNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`);
-    buttonPinned.on('click', (event) => selectPinnedTab());
+    buttonPinned = $(`<a class="item pinned" data-tab="pinned">${game.i18n.localize("TC.TABS.Pinned")}</a>`);
+    buttonPinned.on('click', (event) => selectPinnedTab(chatLog));
 
     let toPrepend = $('<nav class="pinnedchatlog tabs"></nav>');
     toPrepend.append(buttonDefault).append(buttonPinned);
@@ -22,21 +24,30 @@ Hooks.on("renderChatLog", async function (chatLog, html, user) {
     html.prepend(toPrepend);
 });
 
-function selectDefaultTab(){
+function selectDefaultTab(chatLog){
     currentTab = "default";
+    buttonDefault.addClass('active');
+    buttonPinned.removeClass('active');
+
     setClassVisibility($(".chat-message"), true);
-    $("#DefaultNotification").hide();
-    
+
+    chatLog.scrollBottom(true)
 };
 
-function selectPinnedTab(){
+function selectPinnedTab(chatLog){
     currentTab = "pinned";
+    buttonPinned.addClass('active');
+    buttonDefault.removeClass('active');
+
     setClassVisibility($(".chat-message").not(".pinned-message"), false);
-    $("#PinnedNotification").hide();
+
+    chatLog.scrollBottom(true)
 };
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
-    addButton(html, chatMessage);
+    if(chatMessage.canUserModify(Users.instance.current,'update')){
+        addButton(html, chatMessage);
+    }
 
     if(chatMessage.data?.flags?.pinnedChat?.pinned){
         html.addClass("pinned-message")
@@ -48,14 +59,14 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
 });
 
 function addButton(messageElement, chatMessage) {
-    let deletecardElement = messageElement.find(".message-delete")
+    let messageMetadata = messageElement.find(".message-metadata")
     // Can't find it?
-    if (deletecardElement.length != 1) {
+    if (messageMetadata.length != 1) {
         return;
     }
     let button = $(`<a> <i class="fas fa-map-pin"></i></a>`);
     button.on('click', (event) => pinnedMessage(messageElement, chatMessage));
-    deletecardElement.after(button);
+    messageMetadata.append(button);
 };
 
 function pinnedMessage(message, chatMessage){

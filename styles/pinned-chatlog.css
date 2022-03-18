@@ -21,13 +21,3 @@
 .hardHide {
     display: none !important;
 }
-
-#pinnedNotification {
-    top: 35px;
-    right: 196px;
-}
-
-#defaultNotification {
-    top: 35px;
-    right: 118px;
-}
