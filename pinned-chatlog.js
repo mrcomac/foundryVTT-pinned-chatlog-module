@@ -1,4 +1,6 @@
 let currentTab = "default";
+let buttonDefault;
+let buttonPinned;
 
 function setClassVisibility(cssClass, visible) {
     if (visible) {
@@ -10,11 +12,11 @@ function setClassVisibility(cssClass, visible) {
 
 //Add chatlog type navigation
 Hooks.on("renderChatLog", async function (chatLog, html, user) {
-    let buttonDefault = $(`<a class="item default" data-tab="default">${game.i18n.localize("TC.TABS.Default")}</a><i id="defaultNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`);
     buttonDefault.on('click', (event) => selectDefaultTab());
+    buttonDefault = $(`<a class="item active default" data-tab="default">${game.i18n.localize("TC.TABS.Default")}</a>`);
 
-    let buttonPinned = $(`<a class="item pinned" data-tab="pinned">${game.i18n.localize("TC.TABS.Pinned")}</a><i id="pinnedNotification" class="notification-pip fas fa-exclamation-circle" style="display: none;"></i>`);
     buttonPinned.on('click', (event) => selectPinnedTab());
+    buttonPinned = $(`<a class="item pinned" data-tab="pinned">${game.i18n.localize("TC.TABS.Pinned")}</a>`);
 
     let toPrepend = $('<nav class="pinnedchatlog tabs"></nav>');
     toPrepend.append(buttonDefault).append(buttonPinned);
@@ -24,15 +26,18 @@ Hooks.on("renderChatLog", async function (chatLog, html, user) {
 
 function selectDefaultTab(){
     currentTab = "default";
+    buttonDefault.addClass('active');
+    buttonPinned.removeClass('active');
+
     setClassVisibility($(".chat-message"), true);
-    $("#DefaultNotification").hide();
-    
 };
 
 function selectPinnedTab(){
     currentTab = "pinned";
+    buttonPinned.addClass('active');
+    buttonDefault.removeClass('active');
+
     setClassVisibility($(".chat-message").not(".pinned-message"), false);
-    $("#PinnedNotification").hide();
 };
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
