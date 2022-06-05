@@ -44,7 +44,6 @@ async function selectPinnedTab(chatLog){
 
     let pinnedMessages = game.messages.contents.filter(entry => undefined != entry.data.flags.pinnedChat && entry.data.flags.pinnedChat.pinned);
 
-    //const log = chatLog._element[0].children[1];
     const log = $("#chat-log");
     let htmlMessages = [];
     
@@ -54,7 +53,6 @@ async function selectPinnedTab(chatLog){
         pinnedMessage.logged = true;
         try {
             let messageHtml = await pinnedMessage.getHTML();
-            //messageHtml.addClass('pinned-vue-message')
             htmlMessages.push(messageHtml);
         } catch (err) {
           err.message = `Pinned message ${pinnedMessage.id} failed to render: ${err})`;
@@ -64,11 +62,6 @@ async function selectPinnedTab(chatLog){
 
       // Prepend the HTML
       log.prepend(htmlMessages);
-
-
-    //Charger tout les messages ping override _renderBatch
-    //Charger les message non charger et non présent dans la liste index de chatlog ?
-    //
     
     chatLog.scrollBottom(true)
 };
@@ -101,7 +94,6 @@ function addButton(messageElement, chatMessage) {
 function pinnedMessage(message, chatMessage){
     let pinned = chatMessage.data?.flags?.pinnedChat?.pinned;
 
-    
     pinned = !pinned;
 
     chatMessage.update({ "flags.pinnedChat.pinned": pinned },{"diff" :true});
