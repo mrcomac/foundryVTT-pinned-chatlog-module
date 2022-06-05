@@ -30,17 +30,46 @@ function selectDefaultTab(chatLog){
     buttonPinned.removeClass('active');
 
     setClassVisibility($(".chat-message"), true);
+    $(".pinned-vue-message").remove();
 
     chatLog.scrollBottom(true)
 };
 
-function selectPinnedTab(chatLog){
+async function selectPinnedTab(chatLog){
     currentTab = "pinned";
     buttonPinned.addClass('active');
     buttonDefault.removeClass('active');
 
-    setClassVisibility($(".chat-message").not(".pinned-message"), false);
+    setClassVisibility($(".chat-message"), false);
 
+    let pinnedMessages = game.messages.contents.filter(entry => undefined != entry.data.flags.pinnedChat && entry.data.flags.pinnedChat.pinned);
+
+    //const log = chatLog._element[0].children[1];
+    const log = $("#chat-log");
+    let htmlMessages = [];
+    
+    for ( let i=0; i<pinnedMessages.length; i++) {
+        let pinnedMessage = pinnedMessages[i];
+        if (!pinnedMessage.visible) continue;
+        pinnedMessage.logged = true;
+        try {
+            let messageHtml = await pinnedMessage.getHTML();
+            //messageHtml.addClass('pinned-vue-message')
+            htmlMessages.push(messageHtml);
+        } catch (err) {
+          err.message = `Pinned message ${pinnedMessage.id} failed to render: ${err})`;
+          console.error(err);
+        }
+      }
+
+      // Prepend the HTML
+      log.prepend(htmlMessages);
+
+
+    //Charger tout les messages ping override _renderBatch
+    //Charger les message non charger et non présent dans la liste index de chatlog ?
+    //
+    
     chatLog.scrollBottom(true)
 };
 
@@ -53,7 +82,7 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
         html.addClass("pinned-message")
     }
 
-    if (currentTab == "pinned" && !html.hasClass(".pinned-message")) {
+    if (currentTab == "pinned" && !html.hasClass("pinned-message")) {
         html.hide();
     }
 });
@@ -77,3 +106,4 @@ function pinnedMessage(message, chatMessage){
 
     chatMessage.update({ "flags.pinnedChat.pinned": pinned },{"diff" :true});
 };
+
