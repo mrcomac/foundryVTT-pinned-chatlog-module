@@ -86,16 +86,31 @@ function addButton(messageElement, chatMessage) {
     if (messageMetadata.length != 1) {
         return;
     }
-    let button = $(`<a> <i class="fas fa-map-pin"></i></a>`);
-    button.on('click', (event) => pinnedMessage(messageElement, chatMessage));
+    let button = $(`<a> <i class="fas"></i></a>`);//Example of circle fa-circle
+    button.on('click', (event) => pinnedMessage(button, chatMessage));
+    changeIcon(button, chatMessage.data?.flags?.pinnedChat?.pinned);
     messageMetadata.append(button);
 };
 
-function pinnedMessage(message, chatMessage){
+function pinnedMessage(button, chatMessage){
     let pinned = chatMessage.data?.flags?.pinnedChat?.pinned;
 
     pinned = !pinned;
 
+    changeIcon(button, pinned);
+
     chatMessage.update({ "flags.pinnedChat.pinned": pinned },{"diff" :true});
+};
+
+function changeIcon(button, isPinned){
+    let icon = button.find(".fas");
+
+    if(isPinned){
+        icon.removeClass('fa-map-pin');
+        icon.addClass('fa-circle');
+    } else {
+        icon.addClass('fa-map-pin');
+        icon.removeClass('fa-circle');
+    }
 };
 
