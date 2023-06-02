@@ -42,7 +42,7 @@ async function selectPinnedTab(chatLog){
 
     setClassVisibility($(".chat-message"), false);
 
-    let pinnedMessages = game.messages.contents.filter(entry => undefined != entry.data.flags.pinnedChat && entry.data.flags.pinnedChat.pinned);
+    let pinnedMessages = game.messages.contents.filter(entry => undefined != entry.flags.pinnedChat && entry.flags.pinnedChat.pinned);
 
     const log = $("#chat-log");
     let htmlMessages = [];
@@ -71,7 +71,7 @@ Hooks.on("renderChatMessage", (chatMessage, html, data) => {
         addButton(html, chatMessage);
     }
 
-    if(chatMessage.data?.flags?.pinnedChat?.pinned){
+    if(chatMessage?.flags?.pinnedChat?.pinned){
         html.addClass("pinned-message")
     }
 
@@ -88,12 +88,12 @@ function addButton(messageElement, chatMessage) {
     }
     let button = $(`<a> <i class="fas"></i></a>`);//Example of circle fa-circle
     button.on('click', (event) => pinnedMessage(button, chatMessage));
-    changeIcon(button, chatMessage.data?.flags?.pinnedChat?.pinned);
+    changeIcon(button, chatMessage.flags?.pinnedChat?.pinned);
     messageMetadata.append(button);
 };
 
 function pinnedMessage(button, chatMessage){
-    let pinned = chatMessage.data?.flags?.pinnedChat?.pinned;
+    let pinned = chatMessage.flags?.pinnedChat?.pinned;
 
     pinned = !pinned;
 
