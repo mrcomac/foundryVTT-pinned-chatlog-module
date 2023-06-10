@@ -3,13 +3,12 @@ let buttonDefault;
 let buttonPinned;
 
 function setClassVisibility(cssClass, visible) {
-    if (visible) {
-        cssClass.removeClass("hardHide");
-        cssClass.show();
-    } else
-        cssClass.hide();
+    cssClass.style.display = visible;
 };
 
+Hooks.once('ready', () => {
+
+});
 //Add chatlog type navigation
 Hooks.on("renderChatLog", async function (chatLog, html, user) {
     buttonDefault = $(`<a class="item active default" data-tab="default">${game.i18n.localize("TC.TABS.Default")}</a>`);
@@ -29,60 +28,43 @@ function selectDefaultTab(chatLog){
     buttonDefault.addClass('active');
     buttonPinned.removeClass('active');
 
-    setClassVisibility($(".chat-message"), true);
-    $(".pinned-vue-message").remove();
-
+    let pinnedMessages = game.messages.contents;    
+    let messages = $(".chat-message");
+    for ( let i=0; i<pinnedMessages.length; i++) {
+        setClassVisibility(messages[i],"")
+        
+    }
     chatLog.scrollBottom(true)
-};
+}
 
 async function selectPinnedTab(chatLog){
+
     currentTab = "pinned";
     buttonPinned.addClass('active');
     buttonDefault.removeClass('active');
 
-    setClassVisibility($(".chat-message"), false);
-
-    let pinnedMessages = game.messages.contents.filter(entry => undefined != entry.flags.pinnedChat && entry.flags.pinnedChat.pinned);
-
-    const log = $("#chat-log");
-    let htmlMessages = [];
-    
+    let pinnedMessages = game.messages.contents;      
+    let messages = $(".chat-message");
     for ( let i=0; i<pinnedMessages.length; i++) {
-        let pinnedMessage = pinnedMessages[i];
-        if (!pinnedMessage.visible) continue;
-        pinnedMessage.logged = true;
-        try {
-            let messageHtml = await pinnedMessage.getHTML();
-            htmlMessages.push(messageHtml);
-        } catch (err) {
-          err.message = `Pinned message ${pinnedMessage.id} failed to render: ${err})`;
-          console.error(err);
-        }
-      }
-
-      // Prepend the HTML
-      log.prepend(htmlMessages);
+        if(pinnedMessages[i].type != 5) {
+            setClassVisibility(messages[i],"none")
+        }       
+    }
     
     chatLog.scrollBottom(true)
 };
 
 Hooks.on("renderChatMessage", (chatMessage, html, data) => {
-    if(chatMessage.canUserModify(Users.instance.current,'update')){
-        addButton(html, chatMessage);
+    
+    if(chatMessage.type != 5 && currentTab =="pinned") { 
+        let messages = $(".chat-message");
+        setClassVisibility(html[0], "none");
     }
-
-    if(chatMessage?.flags?.pinnedChat?.pinned){
-        html.addClass("pinned-message")
-    }
-
-    if (currentTab == "pinned" && !html.hasClass("pinned-message")) {
-        html.hide();
-    }
+    
 });
 
 function addButton(messageElement, chatMessage) {
     let messageMetadata = messageElement.find(".message-metadata")
-    // Can't find it?
     if (messageMetadata.length != 1) {
         return;
     }
@@ -92,6 +74,7 @@ function addButton(messageElement, chatMessage) {
     messageMetadata.append(button);
 };
 
+
 function pinnedMessage(button, chatMessage){
     let pinned = chatMessage.flags?.pinnedChat?.pinned;
 
@@ -99,7 +82,7 @@ function pinnedMessage(button, chatMessage){
 
     changeIcon(button, pinned);
 
-    chatMessage.update({ "flags.pinnedChat.pinned": pinned },{"diff" :true});
+    chatMessage.update({ "flags.pinnedChat.pinned": true },{"diff" :true});
 };
 
 function changeIcon(button, isPinned){

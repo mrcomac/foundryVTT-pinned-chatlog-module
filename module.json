@@ -1,7 +1,7 @@
 {
-	"id": "pinned-chat-message",
-	"title": "Pinned chat message",
-	"description": "Pinned message to keep it in another chat (global).",
+	"id": "pinned-chat-message-swade",
+	"title": "Pinned chat message (Savage Worlds)",
+	"description": "Pinned message to keep it in another chat (global). Changes for swade",
 	"version": "1.3.0",
 	"compatibility": {
 		"minimum": "9",
@@ -9,7 +9,7 @@
 	},
 	"authors": [
 		{
-			"name": "Jideon"
+			"name": ["Jideon", "Marcos"]
 		}
 	],
 	"esmodules": [
@@ -30,7 +30,7 @@
 			"path": "languages/fr.json"
 		}
 	],
-	"url": "https://github.com/jdeon/foundryVTT-pinned-chatlog-module",
-	"manifest": "https://github.com/jdeon/foundryVTT-pinned-chatlog-module/releases/latest/download/module.json",
-	"download": "https://github.com/jdeon/foundryVTT-pinned-chatlog-module/archive/refs/tags/VERSION_PATHHOLDER.zip"
+	"url": "https://github.com/mrcomac/foundryVTT-pinned-chatlog-module",
+	"manifest": "https://github.com/mrcomac/foundryVTT-pinned-chatlog-module/releases/latest/download/module.json",
+	"download": "https://github.com/mrcomac/foundryVTT-pinned-chatlog-module/archive/refs/tags/module_chat_rolls.zip"
 }
